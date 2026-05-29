@@ -122,9 +122,15 @@ Route::get('/debug-log', function () {
     if (!file_exists($path)) {
         return 'No log file found.';
     }
-    $content = file_get_contents($path);
-    $lastChars = substr($content, -15000); // last 15KB of log
-    return response($lastChars, 200)->header('Content-Type', 'text/plain; charset=utf-8');
+    $lines = file($path);
+    $errorHeaders = [];
+    foreach ($lines as $line) {
+        if (str_starts_with($line, '[2026-') || str_contains($line, 'local.ERROR') || str_contains($line, 'production.ERROR')) {
+            $errorHeaders[] = trim($line);
+        }
+    }
+    $lastErrors = array_slice($errorHeaders, -15); // last 15 errors
+    return response(implode("\n\n", $lastErrors), 200)->header('Content-Type', 'text/plain; charset=utf-8');
 });
 
 Route::get('/', [HomeController::class, 'index'])->name('home');

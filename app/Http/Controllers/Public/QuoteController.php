@@ -139,19 +139,26 @@ class QuoteController extends Controller
      */
     protected function sendAdminMailNotification(QuoteRequest $lead, float $estimatedValue): void
     {
-        $adminEmail = setting('smtp.admin_email', 'admin@optervision.ro');
+        // Fallback to .env from address if database setting is the default or invalid
+        $adminEmail = setting('smtp.admin_email');
+        if (!$adminEmail || $adminEmail === 'admin@optervision.ro') {
+            $adminEmail = config('mail.from.address') ?: 'office@opteravision.ro';
+        }
 
         try {
-            // Dynamically override mailer SMTP configurations based on cached dynamic settings
-            config([
-                'mail.mailers.smtp.host' => setting('smtp.host', config('mail.mailers.smtp.host')),
-                'mail.mailers.smtp.port' => setting('smtp.port', config('mail.mailers.smtp.port')),
-                'mail.mailers.smtp.username' => setting('smtp.username', config('mail.mailers.smtp.username')),
-                'mail.mailers.smtp.password' => setting('smtp.password', config('mail.mailers.smtp.password')),
-                'mail.mailers.smtp.encryption' => setting('smtp.encryption', config('mail.mailers.smtp.encryption')),
-                'mail.from.address' => setting('smtp.from_address', config('mail.from.address')),
-                'mail.from.name' => setting('smtp.from_name', config('mail.from.name')),
-            ]);
+            // Only dynamically override SMTP configurations if custom credentials exist in the settings table
+            $dbPassword = setting('smtp.password');
+            if ($dbPassword && $dbPassword !== 'smtp_password_placeholder') {
+                config([
+                    'mail.mailers.smtp.host' => setting('smtp.host', config('mail.mailers.smtp.host')),
+                    'mail.mailers.smtp.port' => setting('smtp.port', config('mail.mailers.smtp.port')),
+                    'mail.mailers.smtp.username' => setting('smtp.username', config('mail.mailers.smtp.username')),
+                    'mail.mailers.smtp.password' => $dbPassword,
+                    'mail.mailers.smtp.encryption' => setting('smtp.encryption', config('mail.mailers.smtp.encryption')),
+                    'mail.from.address' => setting('smtp.from_address', config('mail.from.address')),
+                    'mail.from.name' => setting('smtp.from_name', config('mail.from.name')),
+                ]);
+            }
 
             // Attempt to send email
             Mail::send([], [], function ($message) use ($lead, $adminEmail, $estimatedValue) {

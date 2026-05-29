@@ -118,19 +118,34 @@ Route::get('/debug-log', function () {
     if ($token !== 'optera_cpanel_deploy_2026') {
         abort(403, 'Acces neautorizat.');
     }
-    $path = storage_path('logs/laravel.log');
-    if (!file_exists($path)) {
-        return 'No log file found.';
-    }
-    $lines = file($path);
-    $errorHeaders = [];
-    foreach ($lines as $line) {
-        if (str_starts_with($line, '[2026-') || str_contains($line, 'local.ERROR') || str_contains($line, 'production.ERROR')) {
-            $errorHeaders[] = trim($line);
+    
+    $output = [];
+    
+    // 1. Scan cPanel standard PHP error logs
+    $logPaths = [
+        'Base PHP error_log' => base_path('error_log'),
+        'Public PHP error_log' => public_path('error_log'),
+        'Laravel Log' => storage_path('logs/laravel.log')
+    ];
+    
+    foreach ($logPaths as $name => $path) {
+        if (file_exists($path)) {
+            $content = file_get_contents($path);
+            $lines = explode("\n", $content);
+            $relevantLines = [];
+            foreach ($lines as $line) {
+                if (trim($line) !== '') {
+                    $relevantLines[] = trim($line);
+                }
+            }
+            $lastLines = array_slice($relevantLines, -15);
+            $output[] = "=== {$name} ({$path}) ===\n" . implode("\n", $lastLines);
+        } else {
+            $output[] = "=== {$name} (Nu există) ===";
         }
     }
-    $lastErrors = array_slice($errorHeaders, -15); // last 15 errors
-    return response(implode("\n\n", $lastErrors), 200)->header('Content-Type', 'text/plain; charset=utf-8');
+    
+    return response(implode("\n\n", $output), 200)->header('Content-Type', 'text/plain; charset=utf-8');
 });
 
 Route::get('/', [HomeController::class, 'index'])->name('home');

@@ -27,6 +27,14 @@ class DatabaseSeeder extends Seeder
                 'role' => 'superadmin',
             ]);
         }
+        if (!User::where('email', 'admin@opteravision.ro')->exists()) {
+            User::create([
+                'name' => 'Optera SuperAdmin',
+                'email' => 'admin@opteravision.ro',
+                'password' => Hash::make('opteravision2026'),
+                'role' => 'superadmin',
+            ]);
+        }
 
         // 2. Seed dynamic settings
         $settings = [

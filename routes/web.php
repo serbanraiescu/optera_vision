@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\QuoteController as AdminQuoteController;
+use App\Http\Controllers\Admin\ClientController as AdminClientController;
+use App\Http\Controllers\Admin\ExportController as AdminExportController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Public\HomeController;
@@ -107,10 +110,28 @@ Route::prefix('admin')->group(function () {
 // 3. PROTECTED ADMIN PORTAL & MINI CRM
 // ==========================================
 Route::middleware(['auth', 'role:superadmin,admin,operator,technician'])->prefix('admin')->group(function () {
+    // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
     
-    // Future CRM, CMS and System Modules (Placeholders for routing compile safety)
-    Route::get('/quotes', function () { return 'Quotes List'; })->name('admin.quotes.index');
+    // CRM Quote Board
+    Route::get('/quotes', [AdminQuoteController::class, 'index'])->name('admin.quotes');
+    Route::get('/quotes/export', [AdminExportController::class, 'exportCsv'])->name('admin.quotes.export');
+    Route::get('/quotes/{quoteRequest}', [AdminQuoteController::class, 'show'])->name('admin.quotes.show');
+    Route::post('/quotes/{quoteRequest}/status', [AdminQuoteController::class, 'updateStatus'])->name('admin.quotes.status');
+    Route::post('/quotes/{quoteRequest}/note', [AdminQuoteController::class, 'addNote'])->name('admin.quotes.note');
+    Route::post('/quotes/{quoteRequest}/assign', [AdminQuoteController::class, 'assignUser'])->name('admin.quotes.assign');
+    Route::post('/quotes/{quoteRequest}/important', [AdminQuoteController::class, 'toggleImportant'])->name('admin.quotes.important');
+    Route::delete('/quotes/{quoteRequest}', [AdminQuoteController::class, 'destroy'])->name('admin.quotes.destroy');
+
+    // Clients Registry
+    Route::get('/clients', [AdminClientController::class, 'index'])->name('admin.clients');
+    Route::post('/quotes/{quoteRequest}/convert-client', [AdminClientController::class, 'linkFromLead'])->name('admin.clients.link');
+
+    // Notifications Mark as Read
+    Route::post('/notifications/mark-all-read', [DashboardController::class, 'markAllNotificationsRead'])->name('admin.notifications.read-all');
+    Route::post('/notifications/{id}/mark-read', [DashboardController::class, 'markNotificationRead'])->name('admin.notifications.read');
+    
+    // Future CMS and System Modules (Placeholders for routing compile safety)
     Route::get('/services', function () { return 'Services List'; })->name('admin.services.index');
     Route::get('/projects', function () { return 'Projects List'; })->name('admin.projects.index');
     Route::get('/pages', function () { return 'Pages CMS'; })->name('admin.pages.index');

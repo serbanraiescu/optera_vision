@@ -60,34 +60,41 @@
 
         <!-- Sidebar Navigation Menu Links -->
         <nav class="flex-grow p-6 space-y-1.5 overflow-y-auto">
-            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl {{ request()->is('admin') ? 'text-emerald-800 bg-emerald-50/50 border border-emerald-100/30' : 'text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent' }} transition-all">
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl {{ request()->routeIs('admin.dashboard') ? 'text-emerald-800 bg-emerald-50/50 border border-emerald-100/30' : 'text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent' }} transition-all">
                 <span class="text-sm">📊</span>
                 Tablou de Bord
             </a>
             
-            <a href="#" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent transition-all">
+            <a href="{{ route('admin.quotes') }}" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl {{ request()->routeIs('admin.quotes*') ? 'text-emerald-800 bg-emerald-50/50 border border-emerald-100/30' : 'text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent' }} transition-all">
                 <span class="text-sm">📞</span>
-                Cereri Ofertă (CRM) <span class="ml-auto text-[10px] font-extrabold bg-emerald-800 text-white px-2 py-0.5 rounded-full">V2</span>
+                Cereri Ofertă (CRM)
             </a>
+
+            @if(auth()->user()->role !== 'technician')
+            <a href="{{ route('admin.clients') }}" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl {{ request()->routeIs('admin.clients*') ? 'text-emerald-800 bg-emerald-50/50 border border-emerald-100/30' : 'text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent' }} transition-all">
+                <span class="text-sm">👥</span>
+                Registru Clienți
+            </a>
+            @endif
 
             <a href="#" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent transition-all">
                 <span class="text-sm">🛠️</span>
-                Servicii <span class="ml-auto text-[10px] font-extrabold bg-emerald-800 text-white px-2 py-0.5 rounded-full">V2</span>
+                Servicii <span class="ml-auto text-[10px] font-extrabold bg-slate-100 text-slate-400 px-2 py-0.5 rounded-full">F4</span>
             </a>
 
             <a href="#" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent transition-all">
                 <span class="text-sm">📂</span>
-                Proiecte Portofoliu <span class="ml-auto text-[10px] font-extrabold bg-emerald-800 text-white px-2 py-0.5 rounded-full">V2</span>
+                Proiecte Portofoliu <span class="ml-auto text-[10px] font-extrabold bg-slate-100 text-slate-400 px-2 py-0.5 rounded-full">F4</span>
             </a>
 
             <a href="#" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent transition-all">
                 <span class="text-sm">📄</span>
-                Pagini CMS <span class="ml-auto text-[10px] font-extrabold bg-emerald-800 text-white px-2 py-0.5 rounded-full">V2</span>
+                Pagini CMS <span class="ml-auto text-[10px] font-extrabold bg-slate-100 text-slate-400 px-2 py-0.5 rounded-full">F4</span>
             </a>
 
             <a href="#" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent transition-all">
                 <span class="text-sm">⚙️</span>
-                Setări Brand & Site <span class="ml-auto text-[10px] font-extrabold bg-emerald-800 text-white px-2 py-0.5 rounded-full">V2</span>
+                Setări Brand & Site <span class="ml-auto text-[10px] font-extrabold bg-slate-100 text-slate-400 px-2 py-0.5 rounded-full">F4</span>
             </a>
         </nav>
 
@@ -131,7 +138,7 @@
             <div class="flex items-center gap-6">
                 <!-- Notifications Bell -->
                 <div class="relative" x-data="{ open: false }">
-                    <button @click="open = !open" type="button" class="w-10 h-10 rounded-full hover:bg-slate-50 flex items-center justify-center border border-slate-200/30 text-slate-650 transition-colors focus:outline-none">
+                    <button @click="open = !open" type="button" class="w-10 h-10 rounded-full hover:bg-slate-50 flex items-center justify-center border border-slate-200/30 text-slate-650 transition-colors focus:outline-none relative">
                         🔔
                         <!-- Notification indicator dot -->
                         @if(auth()->user()->unreadNotifications->count() > 0)
@@ -140,18 +147,48 @@
                     </button>
                     
                     <!-- Notifications Dropdown panel -->
-                    <div x-show="open" @click.away="open = false" style="display: none;" class="absolute right-0 mt-3 w-80 bg-white border border-slate-150 rounded-2xl shadow-xl py-3 z-50">
+                    <div x-show="open" @click.away="open = false" style="display: none;" class="absolute right-0 mt-3 w-80 bg-white border border-slate-150 rounded-2xl shadow-xl py-3 x-50 z-50">
                         <div class="px-4 py-2 border-b border-slate-100 flex items-center justify-between">
                             <span class="text-xs font-bold text-slate-800">Notificări</span>
-                            <span class="text-[9px] font-extrabold bg-emerald-50 text-emerald-850 px-2 py-0.5 rounded-full">
-                                {{ auth()->user()->unreadNotifications->count() }} noi
-                            </span>
+                            @if(auth()->user()->unreadNotifications->count() > 0)
+                                <form action="{{ route('admin.notifications.read-all') }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="text-[9px] font-bold text-emerald-700 hover:text-emerald-950 focus:outline-none">
+                                        Citește tot
+                                    </button>
+                                </form>
+                            @else
+                                <span class="text-[9px] font-bold text-slate-400">0 noi</span>
+                            @endif
                         </div>
-                        <div class="max-h-64 overflow-y-auto">
+                        <div class="max-h-64 overflow-y-auto divide-y divide-slate-50">
                             @forelse(auth()->user()->unreadNotifications as $notif)
-                                <div class="px-4 py-3 border-b border-slate-50 hover:bg-slate-50/50 flex flex-col gap-1 transition-colors">
-                                    <span class="text-xs text-slate-700 font-semibold">{{ $notif->data['title'] ?? 'Notificare nouă' }}</span>
-                                    <span class="text-[10px] text-slate-400">{{ $notif->created_at->diffForHumans() }}</span>
+                                @php
+                                    $data = is_array($notif->data) ? $notif->data : json_decode($notif->data, true);
+                                    $leadId = $data['lead_id'] ?? null;
+                                @endphp
+                                <div class="hover:bg-slate-50/50 transition-colors flex items-start gap-2 p-3">
+                                    <form action="{{ route('admin.notifications.read', $notif->id) }}" method="POST" class="flex-grow text-left">
+                                        @csrf
+                                        <button type="submit" class="w-full text-left focus:outline-none">
+                                            @if($leadId)
+                                                <a href="{{ route('admin.quotes.show', $leadId) }}" class="block">
+                                                    <span class="text-[11px] text-slate-800 font-bold block">{{ $data['title'] ?? 'Notificare' }}</span>
+                                                    <span class="text-[10px] text-slate-500 leading-tight block mt-0.5">{{ $data['message'] ?? '' }}</span>
+                                                </a>
+                                            @else
+                                                <span class="text-[11px] text-slate-800 font-bold block">{{ $data['title'] ?? 'Notificare' }}</span>
+                                                <span class="text-[10px] text-slate-500 leading-tight block mt-0.5">{{ $data['message'] ?? '' }}</span>
+                                            @endif
+                                            <span class="text-[8px] text-slate-400 mt-1 block">{{ $notif->created_at->diffForHumans() }}</span>
+                                        </button>
+                                    </form>
+                                    <form action="{{ route('admin.notifications.read', $notif->id) }}" method="POST" class="inline pt-0.5">
+                                        @csrf
+                                        <button type="submit" class="w-4 h-4 rounded-full flex items-center justify-center text-[9px] text-slate-450 hover:bg-emerald-50 hover:text-emerald-800" title="Marchează ca citit">
+                                            ✓
+                                        </button>
+                                    </form>
                                 </div>
                             @empty
                                 <div class="py-8 text-center text-xs text-slate-450 font-medium">

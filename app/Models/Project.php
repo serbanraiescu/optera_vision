@@ -26,12 +26,14 @@ class Project extends Model
         'sort_order',
         'meta_title',
         'meta_description',
+        'noindex',
     ];
 
     protected $casts = [
         'slug_locked' => 'boolean',
         'is_featured' => 'boolean',
         'sort_order' => 'integer',
+        'noindex' => 'boolean',
     ];
 
     /**

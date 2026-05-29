@@ -12,6 +12,12 @@ use App\Http\Controllers\Public\ServiceController;
 use App\Http\Controllers\Public\ProjectController;
 use App\Http\Controllers\Public\QuoteController;
 use App\Http\Controllers\Public\PageController;
+use App\Http\Controllers\Public\SitemapController;
+
+use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\PageCmsController;
+use App\Http\Controllers\Admin\SeoManagerController;
+use App\Http\Controllers\Admin\MediaLibraryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -163,9 +169,35 @@ Route::middleware(['auth', 'role:superadmin,admin,operator,technician'])->prefix
     // Future CMS and System Modules (Placeholders for routing compile safety)
     Route::get('/services', function () { return 'Services List'; })->name('admin.services.index');
     Route::get('/projects', function () { return 'Projects List'; })->name('admin.projects.index');
-    Route::get('/pages', function () { return 'Pages CMS'; })->name('admin.pages.index');
-    Route::get('/settings', function () { return 'Site Settings'; })->name('admin.settings.index');
+
+    // Settings Group
+    Route::get('/settings', [SettingsController::class, 'index'])->name('admin.settings.index');
+    Route::post('/settings', [SettingsController::class, 'update'])->name('admin.settings.update');
+    Route::post('/settings/clear-cache', [SettingsController::class, 'clearSystemCache'])->name('admin.system.cache.clear');
+    Route::post('/settings/rebuild-sitemap', [SettingsController::class, 'rebuildSitemap'])->name('admin.system.sitemap.rebuild');
+
+    // Pages CMS Group
+    Route::get('/pages', [PageCmsController::class, 'index'])->name('admin.pages.index');
+    Route::get('/pages/create', [PageCmsController::class, 'create'])->name('admin.pages.create');
+    Route::post('/pages', [PageCmsController::class, 'store'])->name('admin.pages.store');
+    Route::get('/pages/{page}/edit', [PageCmsController::class, 'edit'])->name('admin.pages.edit');
+    Route::put('/pages/{page}', [PageCmsController::class, 'update'])->name('admin.pages.update');
+    Route::post('/pages/{page}/duplicate', [PageCmsController::class, 'duplicate'])->name('admin.pages.duplicate');
+    Route::delete('/pages/{page}', [PageCmsController::class, 'destroy'])->name('admin.pages.destroy');
+
+    // SEO Manager Group
+    Route::get('/seo', [SeoManagerController::class, 'index'])->name('admin.seo.index');
+    Route::post('/seo/{type}/{id}', [SeoManagerController::class, 'updateEntitySeo'])->name('admin.seo.update');
+
+    // Media Library Group
+    Route::get('/media', [MediaLibraryController::class, 'index'])->name('admin.media.index');
+    Route::post('/media', [MediaLibraryController::class, 'store'])->name('admin.media.store');
+    Route::delete('/media/{media}', [MediaLibraryController::class, 'destroy'])->name('admin.media.destroy');
 });
+
+// Dynamic Public Sitemap and Robots
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
 
 // Dynamic Legal policy pages & custom SEO pages CMS fallback routing
 Route::get('/{slug}', [PageController::class, 'show'])->name('pages.show');

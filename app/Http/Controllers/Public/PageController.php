@@ -29,6 +29,26 @@ class PageController
 
         // 3. Render dynamic SEO landing pages or standard legal documents
         if ($page->type === 'local_seo') {
+            // Retrieve dynamic locality parameters from the settings repository
+            $locality = setting('company.locality', 'Câmpulung Moldovenesc');
+            $county = setting('company.county', 'Suceava');
+
+            // Clone to avoid mutating the cached page model directly
+            $page = clone $page;
+
+            // Restrict replacements strictly to local SEO types
+            $page->content = str_replace(
+                ['[localitate]', '[judet]', '[localitate_articulat]'],
+                [$locality, $county, $locality . 'ul'],
+                $page->content
+            );
+
+            $page->title = str_replace(
+                ['[localitate]', '[judet]', '[localitate_articulat]'],
+                [$locality, $county, $locality . 'ul'],
+                $page->title
+            );
+
             return view('public.page_seo', compact('page'));
         }
 

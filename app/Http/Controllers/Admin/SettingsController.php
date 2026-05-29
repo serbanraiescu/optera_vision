@@ -90,8 +90,27 @@ class SettingsController extends Controller
 
         $allInputs = $request->except(['_token', 'group']);
 
+        // Map underscore keys back to dot-notation keys (as raw PHP POST parser converts dot to underscore)
+        $mappedInputs = [];
+        $existingKeys = \App\Models\Setting::where('group', $group)->pluck('key')->toArray();
+
+        foreach ($allInputs as $rawKey => $value) {
+            $matched = false;
+            foreach ($existingKeys as $dbKey) {
+                if (str_replace('.', '_', $dbKey) === $rawKey) {
+                    $mappedInputs[$dbKey] = $value;
+                    $matched = true;
+                    break;
+                }
+            }
+            if (!$matched) {
+                // Keep raw key if it did not match any dot-notation keys
+                $mappedInputs[$rawKey] = $value;
+            }
+        }
+
         // Update settings dictionary through SettingsService
-        $this->settingsService->setMany($allInputs, $group);
+        $this->settingsService->setMany($mappedInputs, $group);
 
         // Record activity log for audit
         $this->activityLogger->log(

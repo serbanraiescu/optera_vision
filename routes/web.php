@@ -202,8 +202,8 @@ Route::middleware(['auth', 'role:superadmin,admin,operator,technician'])->prefix
     Route::post('/notifications/{id}/mark-read', [DashboardController::class, 'markNotificationRead'])->name('admin.notifications.read');
     
     // Future CMS and System Modules (Placeholders for routing compile safety)
-    Route::get('/services', function () { return 'Services List'; })->name('admin.services.index');
-    Route::get('/projects', function () { return 'Projects List'; })->name('admin.projects.index');
+    Route::get('/services', function () { return view('admin.services.index'); })->name('admin.services.index');
+    Route::get('/projects', function () { return view('admin.projects.index'); })->name('admin.projects.index');
 
     // Settings Group
     Route::get('/settings', [SettingsController::class, 'index'])->name('admin.settings.index');

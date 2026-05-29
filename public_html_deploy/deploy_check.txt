@@ -1,0 +1,7 @@
+OPTERA VISION DEPLOYMENT SANITY CHECK
+=====================================
+Generated Date/Time : 2026-05-29T13:23:00+03:00
+Expected App Path   : /home/optera_vision
+Expected Public Path: /home/public_html
+Build Folder Present: yes
+Status              : READY FOR MANUAL DEPLOYMENT

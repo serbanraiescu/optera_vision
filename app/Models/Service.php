@@ -35,6 +35,23 @@ class Service extends Model
     ];
 
     /**
+     * The "booted" method of the model.
+     * Invalidates public listing caches and sitemap caches automatically.
+     */
+    protected static function booted()
+    {
+        static::saved(function () {
+            \Illuminate\Support\Facades\Cache::forget('active_services_list');
+            \Illuminate\Support\Facades\Cache::forget('sitemap_xml');
+        });
+
+        static::deleted(function () {
+            \Illuminate\Support\Facades\Cache::forget('active_services_list');
+            \Illuminate\Support\Facades\Cache::forget('sitemap_xml');
+        });
+    }
+
+    /**
      * Scope to retrieve only published services.
      */
     public function scopePublished(Builder $query): Builder

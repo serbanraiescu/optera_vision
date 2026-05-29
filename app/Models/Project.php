@@ -37,6 +37,21 @@ class Project extends Model
     ];
 
     /**
+     * The "booted" method of the model.
+     * Invalidates public sitemap caches automatically.
+     */
+    protected static function booted()
+    {
+        static::saved(function () {
+            \Illuminate\Support\Facades\Cache::forget('sitemap_xml');
+        });
+
+        static::deleted(function () {
+            \Illuminate\Support\Facades\Cache::forget('sitemap_xml');
+        });
+    }
+
+    /**
      * Scope to retrieve only published projects.
      */
     public function scopePublished(Builder $query): Builder

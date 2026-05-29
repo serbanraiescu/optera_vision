@@ -18,6 +18,8 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\PageCmsController;
 use App\Http\Controllers\Admin\SeoManagerController;
 use App\Http\Controllers\Admin\MediaLibraryController;
+use App\Http\Controllers\Admin\ServiceCmsController;
+use App\Http\Controllers\Admin\ProjectCmsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -201,9 +203,24 @@ Route::middleware(['auth', 'role:superadmin,admin,operator,technician'])->prefix
     Route::post('/notifications/mark-all-read', [DashboardController::class, 'markAllNotificationsRead'])->name('admin.notifications.read-all');
     Route::post('/notifications/{id}/mark-read', [DashboardController::class, 'markNotificationRead'])->name('admin.notifications.read');
     
-    // Future CMS and System Modules (Placeholders for routing compile safety)
-    Route::get('/services', function () { return view('admin.services.index'); })->name('admin.services.index');
-    Route::get('/projects', function () { return view('admin.projects.index'); })->name('admin.projects.index');
+    // Nested role-based routing for services/projects CMS panels (strictly locks out Technicians)
+    Route::middleware('role:superadmin,admin,operator')->group(function () {
+        // Services CMS Group
+        Route::get('/services', [ServiceCmsController::class, 'index'])->name('admin.services.index');
+        Route::get('/services/create', [ServiceCmsController::class, 'create'])->name('admin.services.create');
+        Route::post('/services', [ServiceCmsController::class, 'store'])->name('admin.services.store');
+        Route::get('/services/{service}/edit', [ServiceCmsController::class, 'edit'])->name('admin.services.edit');
+        Route::put('/services/{service}', [ServiceCmsController::class, 'update'])->name('admin.services.update');
+        Route::delete('/services/{service}', [ServiceCmsController::class, 'destroy'])->name('admin.services.destroy');
+
+        // Projects CMS Group
+        Route::get('/projects', [ProjectCmsController::class, 'index'])->name('admin.projects.index');
+        Route::get('/projects/create', [ProjectCmsController::class, 'create'])->name('admin.projects.create');
+        Route::post('/projects', [ProjectCmsController::class, 'store'])->name('admin.projects.store');
+        Route::get('/projects/{project}/edit', [ProjectCmsController::class, 'edit'])->name('admin.projects.edit');
+        Route::put('/projects/{project}', [ProjectCmsController::class, 'update'])->name('admin.projects.update');
+        Route::delete('/projects/{project}', [ProjectCmsController::class, 'destroy'])->name('admin.projects.destroy');
+    });
 
     // Settings Group
     Route::get('/settings', [SettingsController::class, 'index'])->name('admin.settings.index');

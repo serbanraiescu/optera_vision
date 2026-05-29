@@ -113,6 +113,20 @@ Route::get('/deploy-setup', function () {
     }
 });
 
+Route::get('/debug-log', function () {
+    $token = request('token');
+    if ($token !== 'optera_cpanel_deploy_2026') {
+        abort(403, 'Acces neautorizat.');
+    }
+    $path = storage_path('logs/laravel.log');
+    if (!file_exists($path)) {
+        return 'No log file found.';
+    }
+    $content = file_get_contents($path);
+    $lastChars = substr($content, -15000); // last 15KB of log
+    return response($lastChars, 200)->header('Content-Type', 'text/plain; charset=utf-8');
+});
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/servicii', [ServiceController::class, 'index'])->name('services.index');

@@ -26,22 +26,51 @@ Route::get('/deploy-setup', function () {
     $token = request('token');
     $secureToken = 'optera_cpanel_deploy_2026';
 
+    // 1. Core security checks: token validation
     if ($token !== $secureToken) {
         abort(403, 'Acces neautorizat. Token de securitate invalid.');
+    }
+
+    // 2. Strict live deployment security restriction:
+    // If the database has already been successfully migrated and seeded,
+    // restrict this endpoint exclusively to authenticated superadmin accounts.
+    $isMigrated = false;
+    try {
+        $isMigrated = \Illuminate\Support\Facades\Schema::hasTable('users') 
+            && \Illuminate\Support\Facades\Schema::hasTable('settings') 
+            && \App\Models\User::where('role', 'superadmin')->exists();
+    } catch (\Throwable $e) {
+        $isMigrated = false;
+    }
+
+    if ($isMigrated) {
+        if (!auth()->check() || !auth()->user()->isSuperAdmin()) {
+            abort(403, 'Acces refuzat. După instalarea inițială, această rută este securizată și poate fi accesată exclusiv de un cont de SuperAdmin autentificat.');
+        }
     }
 
     $output = [];
 
     try {
-        // 1. Run migrations and seed database
-        $output[] = "--> Rulare Migrări și Seeder...";
-        \Illuminate\Support\Facades\Artisan::call('migrate:fresh', [
-            '--force' => true,
-            '--seed' => true
-        ]);
-        $output[] = "Succes:\n" . \Illuminate\Support\Facades\Artisan::output();
+        // 3. Smart migration runner
+        if (!$isMigrated) {
+            // Wipes and runs seeds on fresh installation
+            $output[] = "--> [Instalare Inițială] Rulare Migrări Complete și Seeder...";
+            \Illuminate\Support\Facades\Artisan::call('migrate:fresh', [
+                '--force' => true,
+                '--seed' => true
+            ]);
+            $output[] = "Succes:\n" . \Illuminate\Support\Facades\Artisan::output();
+        } else {
+            // Runs incremental migrations only, safeguarding live records
+            $output[] = "--> [Actualizare Sistem] Rulare Migrări Incrementale...";
+            \Illuminate\Support\Facades\Artisan::call('migrate', [
+                '--force' => true
+            ]);
+            $output[] = "Succes:\n" . \Illuminate\Support\Facades\Artisan::output();
+        }
 
-        // 2. Clear all configuration, cache, and view caches
+        // 4. Clear all configuration, cache, and view caches
         $output[] = "--> Curățare cache-uri...";
         \Illuminate\Support\Facades\Artisan::call('config:clear');
         \Illuminate\Support\Facades\Artisan::call('cache:clear');
@@ -49,7 +78,7 @@ Route::get('/deploy-setup', function () {
         \Illuminate\Support\Facades\Artisan::call('view:clear');
         $output[] = "Succes: Cache-urile au fost curățate.";
 
-        // 3. Automatically establish storage symlink
+        // 5. Automatically establish storage symlink
         $output[] = "--> Creare legătură simbolică storage (symlink)...";
         $target = '/home/optera_vision/storage/app/public';
         $shortcut = '/home/public_html/storage';
@@ -58,7 +87,7 @@ Route::get('/deploy-setup', function () {
             if (is_link($shortcut)) {
                 $output[] = "Info: Symlink-ul de storage există deja.";
             } else {
-                $output[] = "Atenție: Calea {$shortcut} există și nu este un link simbolic. Se reîncearcă...";
+                $output[] = "Atenție: Calea {$shortcut} există și nu este un link simbolic.";
             }
         } else {
             if (@symlink($target, $shortcut)) {

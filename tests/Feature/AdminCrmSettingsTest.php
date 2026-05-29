@@ -184,7 +184,7 @@ class AdminCrmSettingsTest extends TestCase
             'status' => 'published',
         ]);
 
-        $response = $this->actingAs($this->admin)->post(route('admin.seo.update', ['type' => 'service', 'id' => $service->id]), [
+        $response = $this->actingAs($this->admin)->post(route('admin.seo.entity.update', ['type' => 'service', 'id' => $service->id]), [
             'meta_title' => 'SEO Title Override',
             'meta_description' => 'SEO Description Override',
             'noindex' => '1',

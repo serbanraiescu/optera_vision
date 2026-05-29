@@ -222,7 +222,7 @@ Route::middleware(['auth', 'role:superadmin,admin,operator,technician'])->prefix
 
     // SEO Manager Group
     Route::get('/seo', [SeoManagerController::class, 'index'])->name('admin.seo.index');
-    Route::post('/seo/{type}/{id}', [SeoManagerController::class, 'updateEntitySeo'])->name('admin.seo.update');
+    Route::post('/seo/{type}/{id}', [SeoManagerController::class, 'updateEntitySeo'])->name('admin.seo.entity.update');
 
     // Media Library Group
     Route::get('/media', [MediaLibraryController::class, 'index'])->name('admin.media');

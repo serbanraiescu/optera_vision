@@ -77,25 +77,37 @@
             </a>
             @endif
 
-            <a href="#" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent transition-all">
+            @if(auth()->user()->role !== 'technician')
+            <a href="{{ route('admin.services.index') }}" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl {{ request()->routeIs('admin.services*') ? 'text-emerald-800 bg-emerald-50/50 border border-emerald-100/30' : 'text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent' }} transition-all">
                 <span class="text-sm">🛠️</span>
-                Servicii <span class="ml-auto text-[10px] font-extrabold bg-slate-100 text-slate-400 px-2 py-0.5 rounded-full">F4</span>
+                Servicii
             </a>
 
-            <a href="#" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent transition-all">
+            <a href="{{ route('admin.projects.index') }}" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl {{ request()->routeIs('admin.projects*') ? 'text-emerald-800 bg-emerald-50/50 border border-emerald-100/30' : 'text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent' }} transition-all">
                 <span class="text-sm">📂</span>
-                Proiecte Portofoliu <span class="ml-auto text-[10px] font-extrabold bg-slate-100 text-slate-400 px-2 py-0.5 rounded-full">F4</span>
+                Proiecte Portofoliu
             </a>
 
-            <a href="#" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent transition-all">
+            <a href="{{ route('admin.pages.index') }}" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl {{ request()->routeIs('admin.pages*') ? 'text-emerald-800 bg-emerald-50/50 border border-emerald-100/30' : 'text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent' }} transition-all">
                 <span class="text-sm">📄</span>
-                Pagini CMS <span class="ml-auto text-[10px] font-extrabold bg-slate-100 text-slate-400 px-2 py-0.5 rounded-full">F4</span>
+                Pagini CMS
             </a>
 
-            <a href="#" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent transition-all">
-                <span class="text-sm">⚙️</span>
-                Setări Brand & Site <span class="ml-auto text-[10px] font-extrabold bg-slate-100 text-slate-400 px-2 py-0.5 rounded-full">F4</span>
+            <a href="{{ route('admin.seo.index') }}" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl {{ request()->routeIs('admin.seo*') ? 'text-emerald-800 bg-emerald-50/50 border border-emerald-100/30' : 'text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent' }} transition-all">
+                <span class="text-sm">🔍</span>
+                Manager SEO
             </a>
+
+            <a href="{{ route('admin.media.index') }}" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl {{ request()->routeIs('admin.media*') ? 'text-emerald-800 bg-emerald-50/50 border border-emerald-100/30' : 'text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent' }} transition-all">
+                <span class="text-sm">🖼️</span>
+                Mediatecă
+            </a>
+
+            <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl {{ request()->routeIs('admin.settings*') ? 'text-emerald-800 bg-emerald-50/50 border border-emerald-100/30' : 'text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent' }} transition-all">
+                <span class="text-sm">⚙️</span>
+                Setări Brand & Site
+            </a>
+            @endif
         </nav>
 
         <!-- Sidebar Footer Session Profile -->

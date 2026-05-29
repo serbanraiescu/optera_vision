@@ -63,6 +63,22 @@ Pentru ca imaginile incarcate din cCRM/Admin sa apara pe site-ul public, trebuie
 
 ---
 
+### Pasul 3.5: Rularea Migrărilor, Seeder-ului și Symlink-ului AUTOMAT (Fără Comenzi)
+Pentru a evita utilizarea terminalului SSH sau a configurării de cron job-uri complicate pe cPanel, am integrat un endpoint web securizat special care va face automat toate aceste configurări printr-un singur click în browser.
+
+Dupa ce ati finalizat **Pasul 1** (copierea fisierelor in `public_html`), accesati in browser urmatorul URL:
+
+**`https://optervision.ro/deploy-setup?token=optera_cpanel_deploy_2026`**
+
+Acest link securizat va efectua automat urmatoarele operatiuni direct pe serverul de hosting:
+1.  **Rulare Migrări și Seeder complet:** Șterge tabelele anterioare și populează baza de date cu toate setările, paginile active, serviciile de securitate și proiectele Bucovina seed-uite.
+2.  **Curățare Cache-uri:** Rulează automat `config:clear`, `cache:clear`, `route:clear` și `view:clear` pentru a asigura încărcarea instantanee a noului cod.
+3.  **Creare automată Symlink Storage:** Încearcă crearea legăturii simbolice între `/home/optera_vision/storage/app/public` și `/home/public_html/storage` folosind funcția PHP `symlink()`.
+
+*Ecranul din browser va afișa un jurnal (log) detaliat cu rezultatul fiecărei operațiuni rulată cu succes!*
+
+---
+
 ### Pasul 4: Testarea Functionarii Site-ului
 
 Dupa finalizarea pasilor de mai sus, accesati in browser:

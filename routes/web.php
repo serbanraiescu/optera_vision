@@ -19,6 +19,62 @@ use App\Http\Controllers\Public\PageController;
 // ==========================================
 // 1. PUBLIC WEBSITE SYSTEM
 // ==========================================
+Route::get('/deploy-setup', function () {
+    $token = request('token');
+    $secureToken = 'optera_cpanel_deploy_2026';
+
+    if ($token !== $secureToken) {
+        abort(403, 'Acces neautorizat. Token de securitate invalid.');
+    }
+
+    $output = [];
+
+    try {
+        // 1. Run migrations and seed database
+        $output[] = "--> Rulare Migrări și Seeder...";
+        \Illuminate\Support\Facades\Artisan::call('migrate:fresh', [
+            '--force' => true,
+            '--seed' => true
+        ]);
+        $output[] = "Succes:\n" . \Illuminate\Support\Facades\Artisan::output();
+
+        // 2. Clear all configuration, cache, and view caches
+        $output[] = "--> Curățare cache-uri...";
+        \Illuminate\Support\Facades\Artisan::call('config:clear');
+        \Illuminate\Support\Facades\Artisan::call('cache:clear');
+        \Illuminate\Support\Facades\Artisan::call('route:clear');
+        \Illuminate\Support\Facades\Artisan::call('view:clear');
+        $output[] = "Succes: Cache-urile au fost curățate.";
+
+        // 3. Automatically establish storage symlink
+        $output[] = "--> Creare legătură simbolică storage (symlink)...";
+        $target = '/home/optera_vision/storage/app/public';
+        $shortcut = '/home/public_html/storage';
+
+        if (file_exists($shortcut)) {
+            if (is_link($shortcut)) {
+                $output[] = "Info: Symlink-ul de storage există deja.";
+            } else {
+                $output[] = "Atenție: Calea {$shortcut} există și nu este un link simbolic. Se reîncearcă...";
+            }
+        } else {
+            if (@symlink($target, $shortcut)) {
+                $output[] = "Succes: Symlink creat cu succes între {$target} și {$shortcut}!";
+            } else {
+                $output[] = "Eroare: Nu s-a putut crea symlink-ul automat. Verificați permisiunile cPanel.";
+            }
+        }
+
+        return response(implode("\n", $output), 200)
+            ->header('Content-Type', 'text/plain; charset=utf-8');
+
+    } catch (\Throwable $e) {
+        $output[] = "Eroare critică în timpul deploy-ului: " . $e->getMessage();
+        return response(implode("\n", $output), 500)
+            ->header('Content-Type', 'text/plain; charset=utf-8');
+    }
+});
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/servicii', [ServiceController::class, 'index'])->name('services.index');

@@ -98,7 +98,7 @@
                 Manager SEO
             </a>
 
-            <a href="{{ route('admin.media.index') }}" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl {{ request()->routeIs('admin.media*') ? 'text-emerald-800 bg-emerald-50/50 border border-emerald-100/30' : 'text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent' }} transition-all">
+            <a href="{{ route('admin.media') }}" class="flex items-center gap-3.5 px-4 h-11 text-xs font-bold rounded-xl {{ request()->routeIs('admin.media*') ? 'text-emerald-800 bg-emerald-50/50 border border-emerald-100/30' : 'text-slate-550 hover:text-slate-900 hover:bg-slate-50 border border-transparent' }} transition-all">
                 <span class="text-sm">🖼️</span>
                 Mediatecă
             </a>

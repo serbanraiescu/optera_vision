@@ -204,7 +204,7 @@ Route::middleware(['auth', 'role:superadmin,admin,operator,technician'])->prefix
     Route::post('/seo/{type}/{id}', [SeoManagerController::class, 'updateEntitySeo'])->name('admin.seo.update');
 
     // Media Library Group
-    Route::get('/media', [MediaLibraryController::class, 'index'])->name('admin.media.index');
+    Route::get('/media', [MediaLibraryController::class, 'index'])->name('admin.media');
     Route::post('/media', [MediaLibraryController::class, 'store'])->name('admin.media.store');
     Route::delete('/media/{media}', [MediaLibraryController::class, 'destroy'])->name('admin.media.destroy');
 });

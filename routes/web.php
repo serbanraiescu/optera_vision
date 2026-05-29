@@ -90,8 +90,7 @@ Route::get('/contact', function () {
     return view('public.contact');
 })->name('contact');
 
-// Dynamic Legal policy pages & custom SEO pages CMS fallback routing
-Route::get('/{slug}', [PageController::class, 'show'])->name('pages.show');
+
 
 
 // ==========================================
@@ -117,3 +116,6 @@ Route::middleware(['auth', 'role:superadmin,admin,operator,technician'])->prefix
     Route::get('/pages', function () { return 'Pages CMS'; })->name('admin.pages.index');
     Route::get('/settings', function () { return 'Site Settings'; })->name('admin.settings.index');
 });
+
+// Dynamic Legal policy pages & custom SEO pages CMS fallback routing
+Route::get('/{slug}', [PageController::class, 'show'])->name('pages.show');

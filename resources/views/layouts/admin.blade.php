@@ -110,21 +110,37 @@
             @endif
         </nav>
 
-        <!-- Sidebar Footer Session Profile -->
-        <div class="p-6 border-t border-slate-100 bg-slate-50/30 flex items-center justify-between">
-            <div class="flex flex-col">
-                <span class="text-xs font-bold text-slate-800 truncate max-w-[140px]">{{ auth()->user()->name }}</span>
-                <span class="text-[9px] font-semibold text-emerald-850 uppercase tracking-widest mt-0.5">{{ auth()->user()->role }}</span>
+        <!-- Sidebar Footer branding & Profile -->
+        <div class="border-t border-slate-100 bg-slate-50/30">
+            <!-- Session Profile -->
+            <div class="p-6 flex items-center justify-between pb-4">
+                <div class="flex flex-col">
+                    <span class="text-xs font-bold text-slate-800 truncate max-w-[140px]">{{ auth()->user()->name }}</span>
+                    <span class="text-[9px] font-semibold text-emerald-850 uppercase tracking-widest mt-0.5">{{ auth()->user()->role }}</span>
+                </div>
+                
+                <form action="{{ route('admin.logout') }}" method="POST" class="inline">
+                    @csrf
+                    <button type="submit" class="w-8 h-8 rounded-lg border border-slate-200/50 hover:bg-red-50 hover:text-red-650 hover:border-red-100 flex items-center justify-center transition-colors focus:outline-none" title="Deconectare">
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                    </button>
+                </form>
             </div>
             
-            <form action="{{ route('admin.logout') }}" method="POST" class="inline">
-                @csrf
-                <button type="submit" class="w-8 h-8 rounded-lg border border-slate-200/50 hover:bg-red-50 hover:text-red-650 hover:border-red-100 flex items-center justify-center transition-colors focus:outline-none" title="Deconectare">
-                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                </button>
-            </form>
+            <!-- Daser Signature -->
+            <div class="px-6 pb-6 pt-3 border-t border-slate-100 flex flex-col gap-2">
+                <div class="flex items-center gap-1.5 text-[9px] font-semibold text-slate-400">
+                    <span>Created by</span>
+                    <a href="https://daser.ro" target="_blank" class="hover:underline text-slate-550 font-bold">Daser technologies</a>
+                </div>
+                <div class="opacity-80 hover:opacity-100 transition-opacity">
+                    <a href="https://daser.ro" target="_blank">
+                        <img src="{{ asset('storage/daser-logo-dark.png') }}" alt="Daser Technologies Logo" class="h-4.5 object-contain">
+                    </a>
+                </div>
+            </div>
         </div>
     </aside>
 

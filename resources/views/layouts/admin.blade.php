@@ -133,10 +133,10 @@
             <div class="px-6 pb-6 pt-3 border-t border-slate-100 flex flex-col gap-2">
                 <div class="flex items-center gap-1.5 text-[9px] font-semibold text-slate-400">
                     <span>Created by</span>
-                    <a href="https://daser.ro" target="_blank" class="hover:underline text-slate-550 font-bold">Daser technologies</a>
+                    <a href="https://www.daserdesign.ro" target="_blank" class="hover:underline text-slate-550 font-bold">Daser technologies</a>
                 </div>
                 <div class="opacity-80 hover:opacity-100 transition-opacity">
-                    <a href="https://daser.ro" target="_blank">
+                    <a href="https://www.daserdesign.ro" target="_blank">
                         <img src="{{ asset('storage/daser-logo-dark.png') }}" alt="Daser Technologies Logo" class="h-4.5 object-contain">
                     </a>
                 </div>

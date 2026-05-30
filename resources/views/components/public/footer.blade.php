@@ -92,10 +92,10 @@
             <div class="flex flex-col md:flex-row items-center gap-4 text-[10px] text-slate-650 font-medium">
                 <div class="flex items-center gap-1.5">
                     <span>Created by</span>
-                    <a href="https://daser.ro" target="_blank" class="hover:underline text-slate-550 font-bold">Daser technologies</a>
+                    <a href="https://www.daserdesign.ro" target="_blank" class="hover:underline text-slate-550 font-bold">Daser technologies</a>
                 </div>
                 <div class="h-3 w-px bg-slate-850 hidden md:block"></div>
-                <a href="https://daser.ro" target="_blank" class="opacity-75 hover:opacity-100 transition-opacity">
+                <a href="https://www.daserdesign.ro" target="_blank" class="opacity-75 hover:opacity-100 transition-opacity">
                     <img src="{{ asset('storage/daser-logo-light.png') }}" alt="Daser Technologies Logo" class="h-4 object-contain">
                 </a>
             </div>
